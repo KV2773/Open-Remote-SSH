@@ -168,13 +168,7 @@ if [[ $PLATFORM == "aix" ]]; then
     echo "URL: $SERVER_DOWNLOAD_URL"
 else
     # Original VSCodium/VSCODE URL for other platforms
-    SERVER_DOWNLOAD_URL="$(echo "${SERVER_DOWNLOAD_URL_TEMPLATE}"
-        | sed "s/\\\${quality}/$DISTRO_QUALITY/g"
-        | sed "s/\\\${version}/$DISTRO_VERSION/g"
-        | sed "s/\\\${commit}/$DISTRO_COMMIT/g"
-        | sed "s/\\\${os}/$PLATFORM/g"
-        | sed "s/\\\${arch}/$SERVER_ARCH/g"
-        | sed "s/\\\${release}/$DISTRO_VSCODIUM_RELEASE/g")"
+    SERVER_DOWNLOAD_URL="$(echo "${SERVER_DOWNLOAD_URL_TEMPLATE}" | sed "s/\\\${quality}/$DISTRO_QUALITY/g" | sed "s/\\\${version}/$DISTRO_VERSION/g" | sed "s/\\\${commit}/$DISTRO_COMMIT/g" | sed "s/\\\${os}/$PLATFORM/g" | sed "s/\\\${arch}/$SERVER_ARCH/g" | sed "s/\\\${release}/$DISTRO_VSCODIUM_RELEASE/g")"
 fi
 
 # Check if server script is already installed

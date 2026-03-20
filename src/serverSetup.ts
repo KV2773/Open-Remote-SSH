@@ -49,7 +49,7 @@ export class ServerInstallError extends Error {
 const DEFAULT_DOWNLOAD_URL_TEMPLATE = 'https://github.com/VSCodium/vscodium/releases/download/${version}.${release}/vscodium-reh-${os}-${arch}-${version}.${release}.tar.gz';
 
 // Default GitHub repository for installation scripts
-const DEFAULT_SCRIPTS_BASE_URL = 'https://raw.githubusercontent.com/KV2773/OFA-Remotehttps://raw.githubusercontent.com/KV2773/OFA-Remote-SHH/refs/heads/main/scripts/AIX-SHH/main/scripts';
+const DEFAULT_SCRIPTS_BASE_URL = 'https://raw.githubusercontent.com/KV2773/OFA-Remote-SHH/refs/heads/main/scripts/AIX';
 
 /**
  * Get the configured script base URL or use default
@@ -64,8 +64,7 @@ function getScriptBaseUrl(): string {
  * Fetch installation script from configured URL with timeout and error handling
  */
 async function fetchScriptFromGitHub(scriptName: string, logger: Log): Promise<string | null> {
-    const baseUrl = getScriptBaseUrl();
-    const scriptUrl = `${baseUrl}/${scriptName}`;
+    const scriptUrl = getScriptBaseUrl();
     
     logger.trace(`Fetching installation script from: ${scriptUrl}`);
     
@@ -431,8 +430,8 @@ print_install_results_and_exit() {
 }
 
 # Check if platform is supported
-KERNEL="\\$(uname -s)"
-case \\$KERNEL in
+KERNEL="\$(uname -s)"
+case \$KERNEL in
     Darwin)
         PLATFORM="darwin"
         ;;
@@ -449,14 +448,14 @@ case \\$KERNEL in
         PLATFORM="aix"
         ;;
     *)
-        echo "Error platform not supported: \\$KERNEL"
+        echo "Error platform not supported: \$KERNEL"
         print_install_results_and_exit 1
         ;;
 esac
 
 # Check machine architecture
-ARCH="\\$(uname -m)"
-case \\$ARCH in
+ARCH="\$(uname -m)"
+case \$ARCH in
     x86_64 | amd64)
         SERVER_ARCH="x64"
         ;;
@@ -503,18 +502,18 @@ case \\$ARCH in
 esac
 
 # Add freeware path for AIX
-if [[ \\$PLATFORM == "aix" ]]; then
+if [[ \$PLATFORM == "aix" ]]; then
     export PATH="/opt/freeware/bin:\\$PATH"
 fi
 
 # Handle OS release detection
-if [[ \\$PLATFORM == "aix" ]]; then
+if [[ \$PLATFORM == "aix" ]]; then
     OS_RELEASE_ID="aix"
 else
-    OS_RELEASE_ID="\\$(grep -i '^ID=' /etc/os-release 2>/dev/null | sed 's/^[Ii][Dd]=//' | sed 's/\\"//g')"
-    if [[ -z \\$OS_RELEASE_ID ]]; then
-        OS_RELEASE_ID="\\$(grep -i '^ID=' /usr/lib/os-release 2>/dev/null | sed 's/^[Ii][Dd]=//' | sed 's/\\"//g')"
-        if [[ -z \\$OS_RELEASE_ID ]]; then
+    OS_RELEASE_ID="\$(grep -i '^ID=' /etc/os-release 2>/dev/null | sed 's/^[Ii][Dd]=//' | sed 's/\\"//g')"
+    if [[ -z \$OS_RELEASE_ID ]]; then
+        OS_RELEASE_ID="\$(grep -i '^ID=' /usr/lib/os-release 2>/dev/null | sed 's/^[Ii][Dd]=//' | sed 's/\\"//g')"
+        if [[ -z \$OS_RELEASE_ID ]]; then
             OS_RELEASE_ID="unknown"
         fi
     fi
@@ -543,13 +542,7 @@ if [[ \\$PLATFORM == "aix" ]]; then
     echo "URL: \\$SERVER_DOWNLOAD_URL"
 else
     # Original VSCodium/VSCODE URL for other platforms
-    SERVER_DOWNLOAD_URL="\\$(echo "\${SERVER_DOWNLOAD_URL_TEMPLATE}" \\
-        | sed "s/\\\\\${quality}/\\$DISTRO_QUALITY/g" \\
-        | sed "s/\\\\\${version}/\\$DISTRO_VERSION/g" \\
-        | sed "s/\\\\\${commit}/\\$DISTRO_COMMIT/g" \\
-        | sed "s/\\\\\${os}/\\$PLATFORM/g" \\
-        | sed "s/\\\\\${arch}/\\$SERVER_ARCH/g" \\
-        | sed "s/\\\\\${release}/\\$DISTRO_VSCODIUM_RELEASE/g")"
+    SERVER_DOWNLOAD_URL="\\$(echo "\${SERVER_DOWNLOAD_URL_TEMPLATE}" | sed "s/\\\\\${quality}/\\$DISTRO_QUALITY/g" | sed "s/\\\\\${version}/\\$DISTRO_VERSION/g" | sed "s/\\\\\${commit}/\\$DISTRO_COMMIT/g" | sed "s/\\\\\${os}/\\$PLATFORM/g" | sed "s/\\\\\${arch}/\\$SERVER_ARCH/g" | sed "s/\\\\\${release}/\\$DISTRO_VSCODIUM_RELEASE/g")"
 fi
 
 # Check if server script is already installed
