@@ -49,7 +49,7 @@ export class ServerInstallError extends Error {
 const DEFAULT_DOWNLOAD_URL_TEMPLATE = 'https://github.com/VSCodium/vscodium/releases/download/${version}.${release}/vscodium-reh-${os}-${arch}-${version}.${release}.tar.gz';
 
 // Default GitHub repository for installation scripts
-const DEFAULT_SCRIPTS_BASE_URL = 'https://raw.githubusercontent.com/KV2773/vscodium-server-script/main';
+const DEFAULT_SCRIPTS_BASE_URL = 'https://raw.githubusercontent.com/KV2773/OFA-Remotehttps://raw.githubusercontent.com/KV2773/OFA-Remote-SHH/refs/heads/main/scripts/AIX-SHH/main/scripts';
 
 /**
  * Get the configured script base URL or use default

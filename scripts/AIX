@@ -5,20 +5,20 @@ if [ -z "$HOME" ]; then
     export HOME="$(eval echo ~$(whoami))"
 fi
 
-echo "\${DISTRO_VERSION}"
-echo "\${DISTRO_COMMIT}"
+echo "${DISTRO_VERSION}"
+echo "${DISTRO_COMMIT}"
 
-TMP_DIR="\${XDG_RUNTIME_DIR:-"/tmp"}"
-DISTRO_VERSION="\${DISTRO_VERSION}"
+TMP_DIR="${XDG_RUNTIME_DIR:-"/tmp"}"
+DISTRO_VERSION="${DISTRO_VERSION}"
 DISTRO_BUILD_VERSION="1.105.17075"
-DISTRO_COMMIT="\${DISTRO_COMMIT}"
-DISTRO_QUALITY="\${DISTRO_QUALITY}"
-DISTRO_VSCODIUM_RELEASE="\${DISTRO_VSCODIUM_RELEASE}"
+DISTRO_COMMIT="${DISTRO_COMMIT}"
+DISTRO_QUALITY="${DISTRO_QUALITY}"
+DISTRO_VSCODIUM_RELEASE="${DISTRO_VSCODIUM_RELEASE}"
 
-SERVER_APP_NAME="\${SERVER_APP_NAME}"
-SERVER_INITIAL_EXTENSIONS="\${SERVER_EXTENSIONS}"
-SERVER_LISTEN_FLAG="\${USE_SOCKET_PATH}"
-SERVER_DATA_DIR="$HOME/\${SERVER_DATA_FOLDER}"
+SERVER_APP_NAME="${SERVER_APP_NAME}"
+SERVER_INITIAL_EXTENSIONS="${SERVER_EXTENSIONS}"
+SERVER_LISTEN_FLAG="${USE_SOCKET_PATH}"
+SERVER_DATA_DIR="$HOME/${SERVER_DATA_FOLDER}"
 SERVER_DIR="$SERVER_DATA_DIR/bin/$DISTRO_COMMIT"
 SERVER_SCRIPT="$SERVER_DIR/bin/$SERVER_APP_NAME"
 SERVER_LOGFILE="$SERVER_DATA_DIR/.$DISTRO_COMMIT.log"
@@ -34,15 +34,15 @@ ARCH=
 PLATFORM=
 
 # System Info (available if detected)
-SYSTEM_OS="\${SYSTEM_OS}"
-SYSTEM_ARCH="\${SYSTEM_ARCH}"
-SYSTEM_PLATFORM="\${SYSTEM_PLATFORM}"
-SYSTEM_HOST="\${SYSTEM_HOST}"
-SYSTEM_USER="\${SYSTEM_USER}"
+SYSTEM_OS="${SYSTEM_OS}"
+SYSTEM_ARCH="${SYSTEM_ARCH}"
+SYSTEM_PLATFORM="${SYSTEM_PLATFORM}"
+SYSTEM_HOST="${SYSTEM_HOST}"
+SYSTEM_USER="${SYSTEM_USER}"
 
 # Mimic output from logs of remote-ssh extension
 print_install_results_and_exit() {
-    echo "\${SCRIPT_ID}: start"
+    echo "${SCRIPT_ID}: start"
     echo "exitCode==$1=="
     echo "listeningOn==$LISTENING_ON=="
     echo "connectionToken==$SERVER_CONNECTION_TOKEN=="
@@ -51,7 +51,7 @@ print_install_results_and_exit() {
     echo "arch==$ARCH=="
     echo "platform==$PLATFORM=="
     echo "tmpDir==$TMP_DIR=="
-    echo "\${SCRIPT_ID}: end"
+    echo "${SCRIPT_ID}: end"
     exit 0
 }
 
@@ -168,13 +168,13 @@ if [[ $PLATFORM == "aix" ]]; then
     echo "URL: $SERVER_DOWNLOAD_URL"
 else
     # Original VSCodium/VSCODE URL for other platforms
-    SERVER_DOWNLOAD_URL="$(echo "\${SERVER_DOWNLOAD_URL_TEMPLATE}" 
-        | sed "s/\${quality}/$DISTRO_QUALITY/g" 
-        | sed "s/\${version}/$DISTRO_VERSION/g" 
-        | sed "s/\${commit}/$DISTRO_COMMIT/g" 
-        | sed "s/\${os}/$PLATFORM/g" 
-        | sed "s/\${arch}/$SERVER_ARCH/g" 
-        | sed "s/\${release}/$DISTRO_VSCODIUM_RELEASE/g")"
+    SERVER_DOWNLOAD_URL="$(echo "${SERVER_DOWNLOAD_URL_TEMPLATE}"
+        | sed "s/\\\${quality}/$DISTRO_QUALITY/g"
+        | sed "s/\\\${version}/$DISTRO_VERSION/g"
+        | sed "s/\\\${commit}/$DISTRO_COMMIT/g"
+        | sed "s/\\\${os}/$PLATFORM/g"
+        | sed "s/\\\${arch}/$SERVER_ARCH/g"
+        | sed "s/\\\${release}/$DISTRO_VSCODIUM_RELEASE/g")"
 fi
 
 # Check if server script is already installed
@@ -298,9 +298,9 @@ if [[ ! -f $SERVER_SCRIPT ]]; then
 
         if [[ $FILE_COUNT -gt 0 ]]; then
             find "$SERVER_DIR" -type f ( -name "*.sh" -o -name "*.js" -o -name "*.json" -o -name "*-server") -exec grep -l "/opt/nodejs" {} ; 2>/dev/null | while read -r file; do
-                echo "  Patching: \${file#$SERVER_DIR/}"
-                sed -i.bak "s|/opt/nodejs|\${NODE_PRE_DIR}|g" "$file"
-                rm -f "\${file}.bak"
+                echo "  Patching: ${file#$SERVER_DIR/}"
+                sed -i.bak "s|/opt/nodejs|${NODE_PRE_DIR}|g" "$file"
+                rm -f "${file}.bak"
             done
             echo "✓ Patched $FILE_COUNT files"
         else
@@ -413,7 +413,7 @@ if [[ -z $SERVER_RUNNING_PROCESS ]]; then
 
     touch $SERVER_TOKENFILE
     chmod 600 $SERVER_TOKENFILE
-    SERVER_CONNECTION_TOKEN="\${crypto.randomUUID()}"
+    SERVER_CONNECTION_TOKEN="${crypto.randomUUID()}"
     echo $SERVER_CONNECTION_TOKEN > $SERVER_TOKENFILE
 
     $SERVER_SCRIPT --start-server --host=127.0.0.1 $SERVER_LISTEN_FLAG $SERVER_INITIAL_EXTENSIONS --connection-token-file $SERVER_TOKENFILE --telemetry-level off --enable-remote-auto-shutdown --accept-server-license-terms &> $SERVER_LOGFILE &
