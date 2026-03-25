@@ -74,7 +74,16 @@ async function fetchScriptFromGitHub(scriptName: string, logger: Log): Promise<s
             resolve(null);
         }, 5000); // 5 second timeout
         
-        https.get(scriptUrl, (response) => {
+        // Add cache-busting headers to prevent GitHub CDN from serving stale content
+        const options = {
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
+        };
+        
+        https.get(scriptUrl, options, (response) => {
             clearTimeout(timeout);
             
             if (response.statusCode !== 200) {
@@ -369,6 +378,7 @@ async function generateBashInstallScript(
  * This is used when GitHub fetch fails
  */
 function getEmbeddedBashScript(): string {
+
     // Return the original embedded script as fallback
     // Using placeholder syntax that will be replaced by .replace() calls
     return `
