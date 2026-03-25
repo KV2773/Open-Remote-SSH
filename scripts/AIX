@@ -162,7 +162,7 @@ fi
 # Build server download URL
 if [[ $PLATFORM == "aix" ]]; then
     # For AIX, use the VSCodium build version (e.g. 1.105.17075), not the upstream VS Code version (1.105.1)
-    SERVER_DOWNLOAD_URL="https://github.com/KV2773/vscodium/releases/download/1.105.1%2Bbob1.0.0/vscodium-server.tar.gz"
+    SERVER_DOWNLOAD_URL="https://github.com/KV2773/vscodium/releases/download/${DISTRO_VERSION}/vscodium-server.tar.gz"
 
     echo "Downloading VSCodium server for AIX from GitHub..."
     echo "URL: $SERVER_DOWNLOAD_URL"
@@ -302,43 +302,43 @@ if [[ ! -f $SERVER_SCRIPT ]]; then
         fi
 
         # Patch product.json to match Bob IDE commit/version for client handshake
-        if [[ -f "$SERVER_DIR/product.json" ]]; then
-            echo "=== AIX VSCodium Server Version Update ==="
-            echo "Patching product.json with Bob IDE values..."
-            echo "Target Version: $DISTRO_VERSION"
-            echo "Target Commit: $DISTRO_COMMIT"
-            
-            # Backup original product.json
-            cp "$SERVER_DIR/product.json" "$SERVER_DIR/product.json.backup"
-            
-            # Update version and commit in product.json using perl for in-place editing
-            # This ensures the AIX server (VSCodium build) reports the correct Bob IDE version
-            perl -i -pe "s/\"version\":\s*\"[^\"]*\"/\"version\": \"$DISTRO_VERSION\"/" "$SERVER_DIR/product.json"
-            perl -i -pe "s/\"commit\":\s*\"[^\"]*\"/\"commit\": \"$DISTRO_COMMIT\"/" "$SERVER_DIR/product.json"
-            
-            echo "✓ product.json patched successfully"
-            echo "Verification:"
-            grep -E "(commit|version)" "$SERVER_DIR/product.json" | head -5
-            echo "Backup saved: product.json.backup"
-        else
-            echo "Warning: product.json not found at $SERVER_DIR/product.json"
-        fi
-        
-        # Update package.json if it exists
-        if [[ -f "$SERVER_DIR/package.json" ]]; then
-            echo "Updating package.json version..."
-            cp "$SERVER_DIR/package.json" "$SERVER_DIR/package.json.backup"
-            perl -i -pe "s/\"version\":\s*\"[^\"]*\"/\"version\": \"$DISTRO_VERSION\"/" "$SERVER_DIR/package.json"
-            echo "✓ package.json updated"
-        fi
-        
-        # Create version marker files for reference
-        echo "$DISTRO_VERSION" > "$SERVER_DIR/version"
-        echo "$DISTRO_COMMIT" > "$SERVER_DIR/commit"
-        echo "✓ Created version marker files"
-        
-        
-        echo "=== AIX Server Setup Complete ==="
+if [[ -f "$SERVER_DIR/product.json" ]]; then
+    echo "=== AIX VSCodium Server Version Update ==="
+    echo "Patching product.json with Bob IDE values..."
+    echo "Target Version: $DISTRO_VERSION"
+    echo "Target Commit: $DISTRO_COMMIT"
+    
+    # Backup original product.json
+    cp "$SERVER_DIR/product.json" "$SERVER_DIR/product.json.backup"
+    
+    # Update version and commit in product.json using perl for in-place editing
+    # This ensures the AIX server (VSCodium build) reports the correct Bob IDE version
+    perl -i -pe "s/\"version\":\s*\"[^\"]*\"/\"version\": \"$DISTRO_VERSION\"/" "$SERVER_DIR/product.json"
+    perl -i -pe "s/\"commit\":\s*\"[^\"]*\"/\"commit\": \"$DISTRO_COMMIT\"/" "$SERVER_DIR/product.json"
+    
+    echo "✓ product.json patched successfully"
+    echo "Verification:"
+    grep -E "(commit|version)" "$SERVER_DIR/product.json" | head -5
+    echo "Backup saved: product.json.backup"
+else
+    echo "Warning: product.json not found at $SERVER_DIR/product.json"
+fi
+
+# Update package.json if it exists
+if [[ -f "$SERVER_DIR/package.json" ]]; then
+    echo "Updating package.json version..."
+    cp "$SERVER_DIR/package.json" "$SERVER_DIR/package.json.backup"
+    perl -i -pe "s/\"version\":\s*\"[^\"]*\"/\"version\": \"$DISTRO_VERSION\"/" "$SERVER_DIR/package.json"
+    echo "✓ package.json updated"
+fi
+
+# Create version marker files for reference
+echo "$DISTRO_VERSION" > "$SERVER_DIR/version"
+echo "$DISTRO_COMMIT" > "$SERVER_DIR/commit"
+echo "✓ Created version marker files"
+
+
+echo "=== AIX Server Setup Complete ==="
 
 BASHRC="$HOME/.bashrc"
 SNIPPET_MARKER="# === VSCodium remote-cli PATH setup ==="
